@@ -33,6 +33,44 @@ Extract:
 - exceptions,
 - unresolved questions.
 
+## Interactive Interview Protocol
+
+When clarification is required, **prefer the agent harness's native interactive user-input/question tool instead of asking a plain-text questionnaire in chat**.
+
+### Input control selection
+
+Choose the control that matches the decision:
+
+- **Single-select / options**: use when the user must choose one of several known, mutually exclusive business alternatives.
+- **Multi-select / checkboxes**: use when several known alternatives may apply at the same time.
+- **Free-text / text field**: use when the answer is a factual value that cannot be safely inferred, such as a role name, business rule, threshold, reason, document name, or process description.
+- **Options + Other/free-text**, when supported: use when common choices are known but the user may have a different business-specific answer.
+
+### Interview behavior
+
+- If the harness exposes a structured question tool, use it. Do not replace it with a manually formatted Markdown list of questions.
+- Group only closely related questions in one interaction. Prefer **1–3 high-value questions** per round so the user can answer accurately.
+- Reuse facts already known from the conversation or upstream documents. Never ask the same question twice.
+- For business facts, do **not** provide a “You decide” option. The agent must not choose facts on the user's behalf.
+- Options must be neutral and materially distinct. Do not steer the user toward the agent's recommendation.
+- When one option is recommended, label the recommendation separately from the answer choices or explain it after the user answers.
+- Use free-text fields for unknown facts rather than inventing placeholder values.
+- If an answer introduces a new ambiguity, ask a follow-up using the interactive tool before finalizing the document.
+- Do not emit tool-call JSON, schemas, or internal tool names to the user.
+- If the harness has **no interactive input capability**, fall back to concise plain-text questions.
+
+### Example decision mapping
+
+| Missing information | Preferred control |
+| --- | --- |
+| “Can approver Approve only, or Approve + Reject?” | Single-select |
+| “Which roles participate in this process?” | Multi-select when candidate roles are known |
+| “What is the exact status name after approval?” | Free-text |
+| “How should a mismatch be handled?” with known valid alternatives | Single-select + Other |
+| “Describe the current manual process.” | Free-text |
+
+The purpose of the interview is to collect authoritative business decisions, not to make the interaction look polished. Structured UI must never be used to disguise an assumption as a user choice.
+
 ## Interview Gate
 
 Clarify only material gaps such as:

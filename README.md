@@ -253,6 +253,41 @@ These skills follow several strict rules:
 6. **Business before implementation.** UI, database, API, and engineering tasks should not leak into business artifacts unless specifically required.
 7. **BPMN is opt-in.** The Business Process skill only generates BPMN XML after the user confirms the narrative flow and explicitly wants BPMN.
 
+## Interactive Interview UX
+
+All five skills are designed to use the **native interactive input capability of the active agent harness** whenever it is available.
+
+Instead of dumping a plain-text questionnaire such as:
+
+```text
+1. Who approves the PO?
+2. Can it be rejected?
+3. What is the next status?
+```
+
+the skill instructs the agent to prefer structured controls:
+
+| Question type | Preferred UI |
+|---|---|
+| One known choice | Single-select / options |
+| Several applicable choices | Multi-select / checkboxes |
+| Unknown factual value | Free-text / text field |
+| Known choices plus custom business behavior | Options + Other/free-text |
+
+This is intentionally **harness-agnostic**. Claude Code, Codex, OpenCode, and other harnesses may expose different tool names or UI controls. The skill does not hard-code one provider's tool name. It tells the agent to use whichever native structured-question/input tool is available.
+
+If the harness does not expose interactive input tools, the skill falls back to concise plain-text clarification questions.
+
+Important behavior:
+
+- only ask material questions,
+- usually ask 1–3 related questions per round,
+- do not ask again for facts already known,
+- do not offer “You decide” for factual business decisions,
+- do not invent a value when a text field should be used,
+- keep recommendations separate from answer choices.
+
+
 ## Updating Installed Skills
 
 Agent Skills CLI behavior can evolve. A reliable way to refresh a skill is to run the install command again against this repository. If your CLI version provides an update command, you can also use that.
